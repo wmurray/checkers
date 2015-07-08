@@ -1,29 +1,34 @@
 $(document).ready(function(){
 
-  function Board(){
-    this.boardBox = document.getElementsByClassName('board-box');
-    console.log(this.boardBox);
+  function Board(el){
+    this.el = el;
+    this.startButton = document.getElementsByClassName('button');
 
     var self = this;
 
-    var startNewGame = function(){
-      $('.button').hide();
+    function startNewGame(){
       self.makeCanvas();
       self.makeBoard();
     };
 
-    $('.button').on('click', startNewGame);
+    $(this.startButton).on('click', function(){
+      startNewGame();
+    });
   }
 
   Board.prototype.makeCanvas = function(){
     var oldGame = document.getElementById('board');
     var canvas = document.createElement('canvas');
 
+    if (oldGame !== null){
+      this.el.removeChild(oldGame);
+    }
+
     canvas.id = 'board';
     canvas.width = 400;
     canvas.height = 400;
 
-    self.boardBox.appendChild(canvas);
+    this.el.appendChild(canvas);
   };
 
   Board.prototype.makeBoard = function(){
@@ -54,9 +59,7 @@ $(document).ready(function(){
     }
   };
 
-
-
-  new Board();
-  console.log(Board.boardBox);
+  var boardBox = document.querySelector('.board-box');
+  new Board(boardBox);
 
 });
