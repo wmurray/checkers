@@ -1,40 +1,132 @@
 $(document).ready(function(){
 
+  /////////////////
+  // Game object //
+  /////////////////
+
+  function Game(){
+    var canvas;
+    var ctx;
+    var WIDTH;
+    var HEIGHT;
+    var INTERVAL = 20; // check for redraw every (this) milliseconds
+
+    var isDrag = false;
+
+    var mouseX, mouseY; // Mouse coords
+
+    var canvasValid = false; // Determines if canvas needs redraw
+
+    // Current selection (if any), its border color and width.
+    var selected;
+    var selectedColor = '#000000';
+    var selectedBorderWidth = 2;
+
+    // Shadow canvas is used for selection.
+    var shadowCanvas;
+    var shadowCtx;
+
+    // Mouse offset for dragging (you don't have to click center of piece to
+    // drag)
+    var offsetX, offsetY;
+
+    // Padding and border style widths for mouse offset.
+    var stylePaddingLeft, stylePaddingTop, styleBorderLeft, styleBorderTop;
+
+    var boardBox = document.querySelector('.board-box');
+    var pieces = [];
+    this.startButton = document.getElementsByClassName('button');
+
+    function makeCanvas(){
+      var oldGame = document.getElementById('board');
+      var newCanvas = document.createElement('canvas');
+
+      if (oldGame !== null){
+        boardBox.removeChild(oldGame);
+      };
+
+      newCanvas.id = 'board';
+      newCanvas.width = 400;
+      newCanvas.height = 400;
+
+      boardBox.appendChild(newCanvas);
+    }
+
+    function initGame(){
+      canvas = document.getElementById('board');
+      HEIGHT = canvas.height;
+      WIDTH = canvas.width;
+      ctx = canvas.getContext('2d');
+      shadowCanvas = document.createElement('canvas');
+      shadowCanvas.height = HEIGHT;
+      shadowCanvas.width = WIDTH;
+      shadowCanvasCtx = shadowCanvas.getContext('2d');
+
+      // Fix for double-click selecting text in canvas.
+      canvas.onselectstart = function(){ return false; }
+
+      // Fix for mouse coordinates w/ border/padding
+      // see also getMouse
+      if (document.defaultView && document.defaultView.getComputedStyle){
+        stylePaddingLeft = parseInt(document.defaultView.getComputedStyle(canvas, null)['padding-left'], 10) || 0;
+        stylePaddingTop  = parseInt(document.defaultView.getComputedStyle(canvas, null)['paddingTop'], 10) || 0;
+        styleBorderLeft  = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderLeftWidth'], 10) || 0;
+        styleBorderTop   = parseInt(document.defaultView.getComputedStyle(canvas, null)['borderTopWidth'], 10) || 0;
+      }
+
+      // make draw() fire every INTERVAL milliseconds
+      setInterval(draw, INTERVAL);
+
+      canvas.onMouseDown = mouseDown;
+      canvas.onMouseUp = mouseUp;
+
+      new Piece(50, 100, 25, 25, 'yellow');
+    }
+
+    function draw(){
+      if (canvasValid == false){
+        clear(ctx);
+      }
+    }
+
+    $('.button').on('click', function(){
+      makeCanvas();
+      initGame();
+    })
+  }
+
+  //////////////////
+  // Piece object //
+  //////////////////
+
+  function Piece(x, y, width, height, fill){
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.fill = fill;
+
+    (function trackPiece(){
+      pieces.push(this);
+      invalidate();
+    })();
+  }
+
+  //////////////////
+  // Board object //
+  //////////////////
+
   function Board(el){
     this.el = el;
-    this.startButton = document.getElementsByClassName('button');
 
     var self = this;
 
-    function startNewGame(){
-      self.makeCanvas();
+    (function startNewGame(){
       self.makeBoard();
-    };
-
-    $(this.startButton).on('click', function(){
-      startNewGame();
-    });
+    })();
   }
 
-  Board.prototype.makeCanvas = function(){
-    var oldGame = document.getElementById('board');
-    var canvas = document.createElement('canvas');
-
-    if (oldGame !== null){
-      this.el.removeChild(oldGame);
-    }
-
-    canvas.id = 'board';
-    canvas.width = 400;
-    canvas.height = 400;
-
-    this.el.appendChild(canvas);
-  };
-
   Board.prototype.makeBoard = function(){
-    var canvas = document.getElementById('board');
-    var context2d = canvas.getContext('2d');
-
     for(var r = 0; r < 8; r++){
       for(var c = 0; c < 8; c++){
         var x = c * 50;
@@ -42,24 +134,24 @@ $(document).ready(function(){
 
         if (r % 2 === 0){
           if (c % 2 === 0){
-            context2d.fillStyle = 'green';
+            ctx.fillStyle = 'green';
           } else {
-            context2d.fillStyle = 'white';
+            ctx.fillStyle = 'white';
           }
         } else {
           if (c % 2 === 0){
-            context2d.fillStyle = 'white';
+            ctx.fillStyle = 'white';
           } else {
-            context2d.fillStyle = 'green';
+            ctx.fillStyle = 'green';
           }
         }
 
-        context2d.fillRect(x, y, 50, 50);
+        ctx.fillRect(x, y, 50, 50);
       }
     }
   };
 
-  var boardBox = document.querySelector('.board-box');
-  new Board(boardBox);
+
+  new Game();
 
 });
