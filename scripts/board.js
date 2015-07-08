@@ -1,5 +1,18 @@
 $(document).ready(function(){
 
+  /////////////////
+  // Game object //
+  /////////////////
+
+  function Game(){
+    var boardBox = document.querySelector('.board-box');
+
+  }
+
+  //////////////////
+  // Board object //
+  //////////////////
+
   function Board(el){
     this.el = el;
     this.startButton = document.getElementsByClassName('button');
@@ -10,10 +23,6 @@ $(document).ready(function(){
       self.makeCanvas();
       self.makeBoard();
     };
-
-    $(this.startButton).on('click', function(){
-      startNewGame();
-    });
   }
 
   Board.prototype.makeCanvas = function(){
@@ -59,7 +68,18 @@ $(document).ready(function(){
     }
   };
 
-  var boardBox = document.querySelector('.board-box');
-  new Board(boardBox);
+  //////////////////
+  // Piece object //
+  //////////////////
+
+  function Piece(x, y, width, height, fill){
+    this.x = 0;
+    this.y = 0;
+    this.width = 1;
+    this.height = 1;
+    this.fill = '#000000';
+  }
+
+  new Game();
 
 });
