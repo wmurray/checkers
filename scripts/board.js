@@ -21,7 +21,7 @@ $(document).ready(function(){
   // Piece object //
   //////////////////
 
-  function Piece(){
+  function Piece(color){
   }
 
   //////////////////
@@ -80,6 +80,9 @@ $(document).ready(function(){
     };
 
     paintBoard();
+
+    var addPieces = function(){
+    }
   };
 
 
