@@ -1,3 +1,23 @@
-#board{
+.clearfix:after{
+   content: " ";
+   display: block;
+   height: 0;
+   clear: both;
+}
+
+#boardBox{
   border: 1px solid green;
+  width: 400px;
+}
+
+.space{
+  box-sizing: border-box;
+  clear: right;
+  float: left;
+  height: 50px;
+  width:50px;
+}
+
+.space.green{
+  background: green;
 }
