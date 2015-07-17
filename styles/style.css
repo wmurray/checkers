@@ -1,4 +1,4 @@
-.clearfix:after{
+.clearfix::after{
    content: " ";
    display: block;
    height: 0;
@@ -29,9 +29,30 @@
   clear: right;
   float: left;
   height: 50px;
-  width:50px;
+  width: 50px;
 }
 
 .space.green{
   background: green;
+}
+
+.piece{
+  border-radius: 20px;
+  border: 1px solid black;
+  display: block;
+  margin: 4px auto;
+  height: 40px;
+  width: 40px;
+}
+
+.piece.blue{
+  background-color: blue;
+}
+
+.piece.gray{
+  background-color: gray;
+}
+
+.piece.active{
+  border-color: #fff;
 }

@@ -21,68 +21,117 @@ $(document).ready(function(){
   // Piece object //
   //////////////////
 
-  function Piece(color){
+  function Piece(color, startSquare){
+    this.color = color;
+    this.startSquare = startSquare;
+
+    this.el = (function(piece){
+      var el = document.createElement('div');
+      el.className = 'piece ' + piece.color;
+      piece.startSquare.appendChild(el);
+
+      return el;
+    })(this);
+
+    this.el.onclick = function(e) {
+      e.stopPropagation();
+      $(this).addClass("active");
+
+      return false;
+    };
   }
 
-  //////////////////
-  // Board object //
-  //////////////////
+  function Square() {
+    this.el = (function() {
+      var square = document.createElement('div');
+      square.className = 'space';
+      return square;
+    })();
+
+    this.playable = false;
+
+    this.el.onclick = function() {
+      var activePiece = $(".active");
+
+      if(activePiece.length > 0) {
+        $(this).append(activePiece);
+        activePiece.removeClass("active");
+      }
+    };
+  };
+
+  Square.prototype.assignCoordinates = function(x, y) {
+    this.el.dataset.y = x;
+    this.el.dataset.x = y;
+  };
+
+  Square.prototype.isPlayable = function() {
+    this.el.className = 'space green';
+    this.playable = true
+  }
 
   function Board(el){
     this.el = el;
-
-    var self = this;
-
-    (function startNewGame(){
-      console.log('board invoked');
-      self.makeBoard();
-    })();
+    this.makeBoard();
   }
 
   Board.prototype.makeBoard = function(){
+    var totalRows = 8;
+    var totalColumns = 8;
+    var totalSquares = totalRows * totalColumns;
 
-    for(var i = 0; i < 64; i++){
-      var square = document.createElement('div');
-      square.className = 'space';
-      boardBox.appendChild(square);
+    var squares = [];
+    for(var i = 0; i < totalSquares; i++){
+      var square = new Square();
+      squares.push(square);
+      boardBox.appendChild(square.el);
     }
 
-    var spaces = document.getElementsByClassName('space');
-    var spacesLength = spaces.length;
-    var spacesCoords = [];
+    var boardRows = (function() {
+      var boardRows = [];
+      var row = [];
 
-    var paintBoard = function(){
-      var miniArray = [];
-
-      for (var i = 0; i <= spaces.length; i++){
+      for (var i = 0; i <= totalSquares; i++){
         if (i%8 !== 0 || i === 0){
-          miniArray.push(spaces[i]);
+          row.push(squares[i]);
         }else{
-          spacesCoords.push(miniArray);
-          miniArray = [];
-          miniArray.push(spaces[i]);
+          boardRows.push(row);
+          row = [];
+          row.push(squares[i]);
         }
       }
 
-      var coordsLength = spacesCoords.length;
+      return boardRows;
+    })();
 
-      for (var i = 0; i < coordsLength; i++){
-        var currentY = spacesCoords[i];
-        for (var j = 0; j < currentY.length; j++){
-          currentY[j].dataset.y = i;
-          currentY[j].dataset.x = j;
+    var paintBoard = function(){
+      for (var row = 0; row < totalRows; row++){
+        var currentRow = boardRows[row];
+        for (var column = 0; column < totalColumns; column++){
+          var square = currentRow[column];
+          square.assignCoordinates(row, column);
 
-          if ((j%2 === 0 && i%2 !== 0) || (j%2 !== 0 && i%2 === 0)){
-            currentY[j].className = 'space green'
+          if ((column%2 === 0 && row%2 !== 0) || (column%2 !== 0 && row%2 === 0)){
+            square.isPlayable();
           }
         }
       }
     };
 
-    paintBoard();
-
     var addPieces = function(){
-    }
+      var greenSquares = $('.green');
+
+      for(var i = 0; i < greenSquares.length; i++){
+        if(greenSquares[i].getAttribute('data-y')< 3){
+          new Piece('blue', greenSquares[i]);
+        }else if(greenSquares[i].getAttribute('data-y') > 4){
+          new Piece('gray', greenSquares[i]);
+        }
+      }
+    };
+
+    paintBoard();
+    addPieces();
   };
 
 
