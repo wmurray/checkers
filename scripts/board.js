@@ -24,6 +24,7 @@ $(document).ready(function(){
   function Piece(color, startSquare){
     this.color = color;
     this.startSquare = startSquare;
+    this.king = false;
 
     this.el = (function(piece){
       var el = document.createElement('div');
@@ -35,6 +36,7 @@ $(document).ready(function(){
 
     this.el.onclick = function(e) {
       e.stopPropagation();
+      $('.active').removeClass('active');
       $(this).addClass("active");
 
       return false;
@@ -49,11 +51,13 @@ $(document).ready(function(){
     })();
 
     this.playable = false;
+    var self = this;
 
     this.el.onclick = function() {
       var activePiece = $(".active");
 
-      if(activePiece.length > 0) {
+      if(activePiece.length > 0 & self.playable === true) {
+        self.moveSingleSpace(this);
         $(this).append(activePiece);
         activePiece.removeClass("active");
       }
@@ -69,6 +73,14 @@ $(document).ready(function(){
     this.el.className = 'space green';
     this.playable = true
   }
+
+  Square.prototype.moveSingleSpace = function(targetSpace) {
+    var activePiece = $('.active');
+    console.log(activePiece);
+    if($(targetSpace).attr('data-y') === $(activePiece).parent().attr('data-y') + 1) {
+      console.log('good to go!');
+    }
+  };
 
   function Board(el){
     this.el = el;
