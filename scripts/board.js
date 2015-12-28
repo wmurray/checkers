@@ -43,6 +43,10 @@ $(document).ready(function(){
     };
   }
 
+  ///////////////////
+  // Square object //
+  ///////////////////
+
   function Square() {
     this.el = (function() {
       var square = document.createElement('div');
@@ -90,6 +94,10 @@ $(document).ready(function(){
 //      activePiece.removeClass('active');
 //    }
   };
+
+  //////////////////
+  // Board object //
+  //////////////////
 
   function Board(el){
     this.el = el;
