@@ -55,11 +55,19 @@ $(document).ready(function(){
 
     this.el.onclick = function() {
       var activePiece = $(".active");
+      var targetSpaceYCoord = parseInt($(this).attr('data-y'));
+      var currentYCoord = parseInt($(activePiece).parent().attr('data-y'));
+
+      console.log(targetSpaceYCoord === (currentYCoord + 1));
+
 
       if(activePiece.length > 0 & self.playable === true) {
-        self.moveSingleSpace(this);
-        $(this).append(activePiece);
-        activePiece.removeClass("active");
+        if(targetSpaceYCoord === currentYCoord + 1) {
+          $(this).append(activePiece);
+          activePiece.removeClass('active');
+        }
+        //$(this).append(activePiece);
+        //activePiece.removeClass("active");
       }
     };
   };
@@ -76,10 +84,11 @@ $(document).ready(function(){
 
   Square.prototype.moveSingleSpace = function(targetSpace) {
     var activePiece = $('.active');
-    console.log(activePiece);
-    if($(targetSpace).attr('data-y') === $(activePiece).parent().attr('data-y') + 1) {
-      console.log('good to go!');
-    }
+      console.log('hi');
+//    if($(targetSpace).attr('data-y') === $(activePiece).parent().attr('data-y') + 1) {
+//      $(targetSpace).append(activePiece);
+//      activePiece.removeClass('active');
+//    }
   };
 
   function Board(el){
